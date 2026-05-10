@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Users (Influencers) ───
+model User {
+  id                String   @id @default(cuid())
+  instagramId       String   @unique @map("instagram_id")
+  instagramUsername  String   @map("instagram_username")
+  instagramName     String?  @map("instagram_name")
+  profilePicUrl     String?  @map("profile_pic_url")
+  accessToken       String   @map("access_token")
+  tokenExpiresAt    DateTime? @map("token_expires_at")
+  plan              Plan     @default(FREE)
+  razorpayCustomerId String? @map("razorpay_customer_id")
+  razorpaySubId     String?  @map("razorpay_sub_id")
+  dmsSentThisMonth  Int      @default(0) @map("dms_sent_this_month")
+  dmResetDate       DateTime @default(now()) @map("dm_reset_date")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  automations Automation[]
+  dmLogs      DmLog[]
+
+  @@map("users")
+}
+
+enum Plan {
+  FREE
+  STARTER
+  GROWTH
+  PRO
+}
+
+// ─── Automations (post + keyword + link combos) ───
+model Automation {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Instagram post details
+  postId      String   @map("post_id")
+  postUrl     String?  @map("post_url")
+  postCaption String?  @map("post_caption")
+  postThumbUrl String? @map("post_thumb_url")
+
+  // Trigger config
+  keywords    String[] // e.g. ["link", "interested", "price"]
+  dmMessage   String   @map("dm_message") // The message to send
+  dmLink      String   @map("dm_link")    // The URL to include
+
+  isActive    Boolean  @default(true) @map("is_active")
+  dmsSent     Int      @default(0) @map("dms_sent")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  dmLogs      DmLog[]
+
+  @@unique([userId, postId])
+  @@index([postId])
+  @@map("automations")
+}
+
+// ─── DM Logs ───
+model DmLog {
+  id            String   @id @default(cuid())
+  automationId  String   @map("automation_id")
+  automation    Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
+  userId        String   @map("user_id")
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  recipientIgId String   @map("recipient_ig_id")
+  recipientName String?  @map("recipient_name")
+  commentText   String?  @map("comment_text")
+  status        DmStatus @default(SENT)
+  sentAt        DateTime @default(now()) @map("sent_at")
+
+  @@index([automationId])
+  @@index([userId])
+  @@index([recipientIgId, automationId])
+  @@map("dm_logs")
+}
+
+enum DmStatus {
+  SENT
+  FAILED
+  RATE_LIMITED
+}
