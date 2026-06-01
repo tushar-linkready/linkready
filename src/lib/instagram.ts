@@ -9,7 +9,7 @@ const META_GRAPH_FB_URL = "https://graph.facebook.com/v19.0";
 // ─── OAuth ───
 
 export function getInstagramAuthUrl(): string {
-  const appId = process.env.META_APP_ID!;
+  const appId = process.env.INSTAGRAM_APP_ID!;
   const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`;
   const scope = [
     "instagram_business_basic",
@@ -40,7 +40,7 @@ export async function exchangeCodeForToken(code: string): Promise<{
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
-        client_id: process.env.META_APP_ID!,
+        client_id: process.env.INSTAGRAM_APP_ID!,
         client_secret: process.env.META_APP_SECRET!,
         grant_type: "authorization_code",
         redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
