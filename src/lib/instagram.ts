@@ -33,20 +33,28 @@ export async function exchangeCodeForToken(code: string): Promise<{
   accessToken: string;
   userId: string;
 }> {
+  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`;
+
+  console.log("Token exchange params:");
+  console.log("  client_id:", process.env.INSTAGRAM_APP_ID);
+  console.log("  redirect_uri:", redirectUri);
+  console.log("  code length:", code.length);
+  console.log("  code first 30:", code.substring(0, 30));
+
   // Step 1: Exchange code for short-lived token
-  // Instagram Business Login uses api.instagram.com, NOT graph.instagram.com
+  // Use FormData (multipart/form-data) as per Instagram API docs
+  const formData = new FormData();
+  formData.append("client_id", process.env.INSTAGRAM_APP_ID!);
+  formData.append("client_secret", process.env.META_APP_SECRET!);
+  formData.append("grant_type", "authorization_code");
+  formData.append("redirect_uri", redirectUri);
+  formData.append("code", code);
+
   const shortLivedRes = await fetch(
     `https://api.instagram.com/oauth/access_token`,
     {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        client_id: process.env.INSTAGRAM_APP_ID!,
-        client_secret: process.env.META_APP_SECRET!,
-        grant_type: "authorization_code",
-        redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
-        code,
-      }),
+      body: formData,
     }
   );
 
@@ -56,6 +64,7 @@ export async function exchangeCodeForToken(code: string): Promise<{
   }
 
   const shortLived = await shortLivedRes.json();
+  console.log("Short-lived token obtained, user_id:", shortLived.user_id);
 
   // Step 2: Exchange for long-lived token (60 days)
   const longLivedRes = await fetch(
