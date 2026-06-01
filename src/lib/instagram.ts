@@ -41,7 +41,7 @@ export async function exchangeCodeForToken(code: string): Promise<{
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         client_id: process.env.INSTAGRAM_APP_ID!,
-        client_secret: process.env.META_APP_SECRET!,
+        client_secret: process.env.INSTAGRAM_APP_SECRET!,
         grant_type: "authorization_code",
         redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
         code,
