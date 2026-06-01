@@ -34,14 +34,15 @@ export async function exchangeCodeForToken(code: string): Promise<{
   userId: string;
 }> {
   // Step 1: Exchange code for short-lived token
+  // Instagram Business Login uses api.instagram.com, NOT graph.instagram.com
   const shortLivedRes = await fetch(
-    `${META_GRAPH_URL}/oauth/access_token`,
+    `https://api.instagram.com/oauth/access_token`,
     {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         client_id: process.env.INSTAGRAM_APP_ID!,
-        client_secret: process.env.INSTAGRAM_APP_SECRET!,
+        client_secret: process.env.META_APP_SECRET!,
         grant_type: "authorization_code",
         redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
         code,
