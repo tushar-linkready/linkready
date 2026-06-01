@@ -45,7 +45,7 @@ export async function exchangeCodeForToken(code: string): Promise<{
   // Use FormData (multipart/form-data) as per Instagram API docs
   const formData = new FormData();
   formData.append("client_id", process.env.INSTAGRAM_APP_ID!);
-  formData.append("client_secret", process.env.META_APP_SECRET!);
+  formData.append("client_secret", process.env.INSTAGRAM_APP_SECRET!);
   formData.append("grant_type", "authorization_code");
   formData.append("redirect_uri", redirectUri);
   formData.append("code", code);
