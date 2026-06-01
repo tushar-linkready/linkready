@@ -70,7 +70,7 @@ export async function exchangeCodeForToken(code: string): Promise<{
   const longLivedRes = await fetch(
     `${META_GRAPH_URL}/access_token` +
       `?grant_type=ig_exchange_token` +
-      `&client_secret=${process.env.META_APP_SECRET}` +
+      `&client_secret=${process.env.INSTAGRAM_APP_SECRET}` +
       `&access_token=${shortLived.access_token}`,
     { method: "GET" }
   );
