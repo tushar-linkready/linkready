@@ -44,7 +44,7 @@ export async function exchangeCodeForToken(code: string): Promise<{
   // Step 1: Exchange code for short-lived token
   // Use FormData (multipart/form-data) as per Instagram API docs
   const formData = new FormData();
-  formData.append("client_id", process.env.META_APP_ID!);
+  formData.append("client_id", process.env.INSTAGRAM_APP_ID!);
   formData.append("client_secret", process.env.META_APP_SECRET!);
   formData.append("grant_type", "authorization_code");
   formData.append("redirect_uri", redirectUri);
