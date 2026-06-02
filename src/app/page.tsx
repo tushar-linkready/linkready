@@ -322,8 +322,8 @@ export default function HomePage() {
             <span className="font-bold text-gray-900">LinkReady</span>
           </div>
           <div className="flex gap-6 text-sm text-gray-500">
-            <a href="#" className="hover:text-gray-900">Privacy</a>
-            <a href="#" className="hover:text-gray-900">Terms</a>
+            <a href="/privacy" className="hover:text-gray-900">Privacy</a>
+            <a href="/terms" className="hover:text-gray-900">Terms</a>
             <a href="mailto:support@linkready.in" className="hover:text-gray-900">Contact</a>
           </div>
           <div className="text-sm text-gray-400">
